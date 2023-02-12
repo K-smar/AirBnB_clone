@@ -1,52 +1,60 @@
 #!/usr/bin/python3
-from datetime import datetime
+#!/usr/bin/python3
+"""Module for Base class
+Contains the Base class for the AirBnB clone console.
+"""
+
 import uuid
-import models
-"""
-BaseModel module
-"""
+from datetime import datetime
+from models import storage
 
 
 class BaseModel:
-    """
-    Class BaseModel
-    """
+
+    """Class for base model of object hierarchy."""
+
     def __init__(self, *args, **kwargs):
+        """Initialization of a Base instance.
+        Args:
+            - *args: list of arguments
+            - **kwargs: dict of key-values arguments
         """
-        Initializes a new instance of the class
-        """
-        if kwargs:
-            for key, value in kwargs.items():
-                if key == "created_at" or key == "updated_at":
-                    value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')
-                if key != "__class__":
-                    setattr(self, key, value)
+
+        if kwargs is not None and kwargs != {}:
+            for key in kwargs:
+                if key == "created_at":
+                    self.__dict__["created_at"] = datetime.strptime(
+                        kwargs["created_at"], "%Y-%m-%dT%H:%M:%S.%f")
+                elif key == "updated_at":
+                    self.__dict__["updated_at"] = datetime.strptime(
+                        kwargs["updated_at"], "%Y-%m-%dT%H:%M:%S.%f")
+                else:
+                    self.__dict__[key] = kwargs[key]
         else:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
-            models.storage.new(self)
+            storage.new(self)
 
     def __str__(self):
-        """
-        Returns a string representation of the instance
-        """
-        return "[{}] ({}) {}".format(self.__class__.__name__, self.id,
-                                     self.__dict__)
+        """Returns a human-readable string representation
+        of an instance."""
+
+        return "[{}] ({}) {}".\
+            format(type(self).__name__, self.id, self.__dict__)
 
     def save(self):
-        """
-        Updates the updated_at attribute to the current datetime
-        """
+        """Updates the updated_at attribute
+        with the current datetime."""
+
         self.updated_at = datetime.now()
-        models.storage.save()
+        storage.save()
 
     def to_dict(self):
-        """
-        Returns a dictionary representation of the instance
-        """
-        dict_repr = self.__dict__.copy()
-        dict_repr["__class__"] = self.__class__.__name__
-        dict_repr["created_at"] = self.created_at.isoformat()
-        dict_repr["updated_at"] = self.updated_at.isoformat()
-        return dict_repr
+        """Returns a dictionary representation of an instance."""
+
+        my_dict = self.__dict__.copy()
+        my_dict["__class__"] = type(self).__name__
+        my_dict["created_at"] = my_dict["created_at"].isoformat()
+        my_dict["updated_at"] = my_dict["updated_at"].isoformat()
+        return my_dict
