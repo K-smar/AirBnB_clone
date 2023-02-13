@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-#!/usr/bin/python3
 """Module for Base class
 Contains the Base class for the AirBnB clone console.
 """
@@ -58,3 +57,4 @@ class BaseModel:
         my_dict["created_at"] = my_dict["created_at"].isoformat()
         my_dict["updated_at"] = my_dict["updated_at"].isoformat()
         return my_dict
+    
